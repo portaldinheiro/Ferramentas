@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de Juros Compostos para calcular investimentos e rendimentos. Fácil de usar e otimizada para qualquer dispositivo.">
+    <title>Calculadora de Juros Compostos</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            margin: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #000;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .result-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Juros Compostos</h1>
+        <label for="valorInicial">Valor Inicial (R$)</label>
+        <input type="number" id="valorInicial" placeholder="Informe o valor inicial" required>
+        <label for="valorMensal">Valor Mensal (R$)</label>
+        <input type="number" id="valorMensal" placeholder="Informe o valor mensal" required>
+        <label for="taxaJuros">Taxa de Juros (%)</label>
+        <input type="number" id="taxaJuros" placeholder="Informe a taxa de juros" required>
+        <label for="tipoTaxa">Tipo de Taxa</label>
+        <select id="tipoTaxa">
+            <option value="mensal">Mensal</option>
+            <option value="anual">Anual</option>
+        </select>
+        <label for="periodo">Período</label>
+        <input type="number" id="periodo" placeholder="Informe o número de meses ou anos">
+        <select id="tipoPeriodo">
+            <option value="meses">Meses</option>
+            <option value="anos">Anos</option>
+        </select>
+        <button onclick="calcularJuros()">Calcular</button>
+        <div class="result-container" id="resultado">
+        </div>
+    </div>
+
+    <script>
+        function calcularJuros() {
+            const valorInicial = parseFloat(document.getElementById('valorInicial').value);
+            const valorMensal = parseFloat(document.getElementById('valorMensal').value);
+            let taxaJuros = parseFloat(document.getElementById('taxaJuros').value) / 100;
+            const periodo = parseInt(document.getElementById('periodo').value);
+            const tipoPeriodo = document.getElementById('tipoPeriodo').value;
+            const tipoTaxa = document.getElementById('tipoTaxa').value;
+
+            if (isNaN(valorInicial) || isNaN(valorMensal) || isNaN(taxaJuros) || isNaN(periodo) || valorInicial <= 0 || periodo <= 0) {
+                alert("Por favor, insira valores válidos.");
+                return;
+            }
+
+            let periodoEmMeses = tipoPeriodo === 'meses' ? periodo : periodo * 12;
+            if (tipoTaxa === 'anual') {
+                taxaJuros = Math.pow(1 + taxaJuros, 1 / 12) - 1;
+            }
+
+            let valorFinal = valorInicial;
+            let totalInvestido = valorInicial;
+            for (let i = 0; i < periodoEmMeses; i++) {
+                valorFinal *= (1 + taxaJuros);
+                valorFinal += valorMensal;
+                totalInvestido += valorMensal;
+            }
+
+            let totalJuros = valorFinal - totalInvestido;
+
+            document.getElementById('resultado').innerHTML = `
+                <div class="result-title">Resultado</div>
+                <div class="result">Valor Final: <strong>R$ ${valorFinal.toFixed(2)}</strong></div>
+                <div class="result">Total Investido: <strong>R$ ${totalInvestido.toFixed(2)}</strong></div>
+                <div class="result">Total em Juros: <strong>R$ ${totalJuros.toFixed(2)}</strong></div>
+            `;
+        }
+    </script>
+</body>
+</html>
